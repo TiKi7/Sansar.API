@@ -8,6 +8,8 @@ This repository provides a fully updated environment for developing Sansar API s
 - `docs/`: Contains official documentation and the `access.html` file, which lists the libraries and methods accessible within the Sansar restricted environment.
 - `examples/`: A collection of example scripts demonstrating various Sansar API features.
 - `src/`: Your source code for the Context7 service.
+- `GLOSSARY.md`: A comprehensive glossary of Sansar API and Context7 terms and concepts.
+- `PAGE2.md`: An introductory guide to Sansar scripting, covering file structure, namespaces, media sources, and chat commands.
 
 ## Development Environment
 

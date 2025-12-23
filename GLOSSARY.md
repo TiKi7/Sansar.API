@@ -2,16 +2,7 @@
 
 This glossary defines key terms and concepts used in Sansar scripting and the Context7 service.
 
-## Core Concepts
-
-### Restricted Environment
-The secure execution environment for Sansar scripts. Many standard .NET libraries (e.g., `System.Text.Json`) are unavailable. Refer to `docs/access.html` for a full list of accessible APIs.
-
-### Scene Object Script (`SceneObjectScript`)
-The primary base class for scripts attached to objects natively present in a scene. It provides full access to `ScenePrivate` and `ObjectPrivate`.
-
-### Object Script (`ObjectScript`)
-A base class for scripts on objects that can be rezzed (spawned) at runtime. These scripts have a slightly more limited API (`ScenePublic` instead of `ScenePrivate`).
+## Core Entities
 
 ### Agent
 The representation of a user (avatar) within the virtual environment. 
@@ -19,62 +10,103 @@ The representation of a user (avatar) within the virtual environment.
 - **AgentPublic**: A limited interface for scripts brought in by users.
 
 ### SessionId
-A unique identifier for a user's specific visit to a scene. Used to find and interact with an `AgentPrivate` instance.
+A unique identifier for a user's current visit to a scene. Used to find and interact with an `AgentPrivate` instance.
 
-## Media & Audio
+### Scene
+The virtual environment. `ScenePrivate` is the primary interface for world-level interactions (finding objects, creating datastores, managing users).
 
-### Media Source / Media Stream
-The system used to play online videos (like YouTube) or web content on surfaces within the scene.
-- **`OverrideMediaSource`**: A function to update the URL of the media being displayed scene-wide or for a specific user.
+### ObjectId
+A persistent, unique identifier for any object in the scene.
 
-### Audio Stream
-An online audio source played within the scene.
-- **`OverrideAudioStream`**: A function to change the URL of the web audio stream being played. NOTE: This may cause a few seconds of silence during the restart.
+### Component
+Functional blocks attached to objects that provide specific behaviors (e.g., `RigidBodyComponent` for physics, `AudioComponent` for sound).
 
-### Spatialized Sound
-Audio that originates from a specific 3D coordinate in the world. It is directional and its volume decreases with distance.
+### Scripts
+- **SceneObjectScript**: The primary base class for scripts attached to objects natively present in a scene.
+- **ObjectScript**: A base class for scripts on objects that can be rezzed (spawned) at runtime.
 
-### Non-spatialized Sound
-Audio that plays at a constant volume for the listener, regardless of their position or orientation in the scene.
-
-## Components
-
-### AnimationComponent
-Manages object animations. All animations are resampled to 30fps upon import to Sansar.
-
-### AudioComponent
-Controls sound playback on an object, including spatialization and looping.
-
-### LightComponent
-Controls light properties (color, intensity). Must be marked as "Scriptable" in the Sansar editor to be modifiable via script.
-
-### RigidBodyComponent
-Provides control over physical objects, including applying forces, impulses, and adjusting motion types (static, keyframed, or dynamic).
-
-## Advanced Features
-
-### DataStore
-A persistent database that allows scripts to save and load data across different experiences or sessions using unique keys.
-
-### HttpClient
-Enables scripts to make REST API calls to external web services. Note that this is also subject to the restricted environment's security policies.
-
-### Reactions
-The system for user emotes and gestures. Scripts can subscribe to reaction events or add custom reactions to the emotes panel.
-
-### Quest System
-Allows creators to define tasks and objectives for users. Scripts can interact with quest characters and track user progress.
-
-## Input & Interaction
+## Interaction & UI
 
 ### Interaction
-A property that makes an object clickable in the world. It provides hover text (prompts) and green highlights.
+A property that makes an object clickable in the world. It provides "hotspot" highlights and hover prompts.
+
+### Prompt
+The text label that appears when a user hovers over an interactive object (e.g., "Open Door").
 
 ### Command (`CommandData`)
 Events triggered by user input (keyboard, mouse, or controller). Common commands include "Trigger", "PrimaryAction", and "SecondaryAction".
 
+### Hint Text
+Temporary UI text displayed to a specific agent, usually for instructions or feedback.
+
 ### Chat Channel
 Used for communication between users or scripts. `Chat.DefaultChannel` is the standard channel for nearby chat.
+
+## Motion & Physics
+
+### Rigid Body (`RigidBodyComponent`)
+An object that participates in the physics simulation. It handles collisions, gravity, and can be configured as static, keyframed, or dynamic.
+
+### Mover
+A system used to translate or rotate objects procedurally.
+
+### Keyframed Motion
+Procedural movement following a specific path or time interval, distinct from purely physics-driven movement.
+
+### Teleport
+The act of instantly moving an Agent to a specific `Vector` position and `Quaternion` rotation.
+
+## Media & Communication
+
+### Media Stream / Media Source
+A system for playing video content (like YouTube) or web pages, often mapped to a specific texture surface on an object.
+
+### Audio Stream
+A specialized component for playing streaming audio (like web radio) into the scene. 
+- **`OverrideAudioStream`**: Changes the URL of the web audio stream scene-wide.
+
+### Megaphone
+The internal name for voice broadcasting, allowing an agent's voice to be heard by everyone in the scene regardless of distance.
+
+### Script Event
+Named messages (strings) sent between scripts to trigger behaviors (e.g., "light_on", "door_open").
+
+### Group
+A scoping mechanism in the Sansar Script library used to limit which scripts receive or "hear" specific Script Events.
+
+## Scripting Framework (Context7 / SimpleScripts)
+
+### Coroutine
+A method that can "pause" its execution (using `Wait` or `WaitFor`) without blocking the entire simulation, allowing for timing and sequential logic.
+
+### Reflective
+An object type that can be safely passed between different script instances or scenes, overcoming some restricted environment limitations.
+
+### SimpleData
+A standardized data package used in the Context7 library to carry context (like `AgentInfo` and `ObjectId`) inside a Script Event.
+
+### Simple Script
+The event-driven architecture used by this library to enable complex logic and rapid development without deep coding.
+
+### Restricted Environment
+The secure execution environment for Sansar scripts. Many standard .NET libraries are unavailable for security reasons.
+
+## Persistence & Meta-Systems
+
+### DataStore
+A persistent key-value storage system that saves data across scene restarts and user sessions.
+
+### Quest System
+A structured task system involving QuestGivers (NPCs) and QuestObjects (items to find or interact with).
+
+### Memory Policy
+The set of limits (Warning, Critical, Limit) enforced by Sansar on script memory usage to ensure scene stability.
+
+### HttpClient
+Enables scripts to make REST API calls to external web services, subject to security policies.
+
+### Reactions
+The system for user emotes and gestures. Scripts can subscribe to reaction events or add custom reactions.
 
 ## Math & Types
 
@@ -85,7 +117,7 @@ A collection of common math constants and functions (e.g., PI, Sin, Cos).
 Represents a 3D position or direction (X, Y, Z).
 
 ### Quaternion
-Represents a 3D rotation. Often initialized from Euler angles using `Quaternion.FromEulerAngles`.
+Represents a 3D rotation. Often initialized from Euler angles.
 
 ### Color
-Represents an RGBA color. Use `Color.Black` or `new Color(r, g, b, a)`.
+Represents an RGBA color. Use `Color.Black` or custom RGBA values.

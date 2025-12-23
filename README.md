@@ -2,10 +2,16 @@
 
 This repository provides a fully updated environment for developing Sansar API scripts for the Context7 service.
 
+## Specifications
+- Single Threaded Environment
+- No Multi-Threading Support
+- Restricted Environment
+
 ## Repository Structure
 
 - `lib/`: Contains the essential Sansar API libraries (`Sansar.Script.dll` and `Sansar.Simulation.dll`).
 - `docs/`: Contains official documentation and the `access.html` file, which lists the libraries and methods accessible within the Sansar restricted environment.
+- `ScriptAssembly/`: Instruction on how we can Organize our scripts to upload in sansar.
 - `examples/`: A collection of example scripts demonstrating various Sansar API features.
 - `src/`: Your source code for the Context7 service.
 - `GLOSSARY.md`: A comprehensive glossary of Sansar API and Context7 terms and concepts.

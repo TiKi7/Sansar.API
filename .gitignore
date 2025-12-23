@@ -1,0 +1,9 @@
+[Cc]onfig/
+[Oo]bj/
+[Bb]in/
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+.vscode/
